@@ -6,8 +6,8 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.kroet.tradeshuffler.shared.server.ServerConfigHolder;
 
 /**
- * Common (both sides) Fabric entrypoint: server lifecycle wiring. Runs on dedicated servers and
- * on clients (for the integrated server).
+ * Common (both sides) Fabric entrypoint: server lifecycle wiring. Runs on
+ * dedicated servers and on clients (for the integrated server).
  */
 public final class TradeShufflerFabricBootstrap implements ModInitializer {
     @Override

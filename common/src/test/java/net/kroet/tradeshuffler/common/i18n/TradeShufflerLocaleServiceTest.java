@@ -2,8 +2,8 @@ package net.kroet.tradeshuffler.common.i18n;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import net.kroet.tradeshuffler.common.facade.LocaleFacade;
 import java.util.List;
+import net.kroet.tradeshuffler.common.facade.LocaleFacade;
 import org.junit.jupiter.api.Test;
 
 class TradeShufflerLocaleServiceTest {
@@ -22,4 +22,3 @@ class TradeShufflerLocaleServiceTest {
         assertEquals(LocaleFacade.defaultLocale(), defaultLocale);
     }
 }
-

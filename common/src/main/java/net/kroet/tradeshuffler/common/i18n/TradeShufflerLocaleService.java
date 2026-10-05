@@ -1,9 +1,9 @@
 package net.kroet.tradeshuffler.common.i18n;
 
-import net.kroet.tradeshuffler.common.facade.LocaleFacade;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Properties;
+import net.kroet.tradeshuffler.common.facade.LocaleFacade;
 
 /**
  * Locale helpers for TradeShuffler based on TurtleLib LangLoader.
@@ -24,4 +24,3 @@ public final class TradeShufflerLocaleService {
         return LocaleFacade.normalizeGameLocale(gameLocaleTag);
     }
 }
-

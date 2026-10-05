@@ -1,8 +1,8 @@
 package net.kroet.tradeshuffler.common.core;
 
 /**
- * Translation keys used from code. All UI text is resolved on the client from the bundled
- * {@code assets/tradeshuffler/lang/*.json} files.
+ * Translation keys used from code. All UI text is resolved on the client from
+ * the bundled {@code assets/tradeshuffler/lang/*.json} files.
  */
 public final class TradeShufflerTextKeys {
     public static final String TITLE = "tradeshuffler.title";

@@ -9,8 +9,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 
 /**
- * Common (both sides) NeoForge entrypoint: server lifecycle wiring. Runs on dedicated servers and
- * on clients (for the integrated server).
+ * Common (both sides) NeoForge entrypoint: server lifecycle wiring. Runs on
+ * dedicated servers and on clients (for the integrated server).
  */
 @Mod(TradeShufflerConstants.MOD_ID)
 public final class TradeShufflerNeoForgeEntrypoint {

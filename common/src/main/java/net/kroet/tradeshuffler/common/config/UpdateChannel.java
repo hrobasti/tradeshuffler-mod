@@ -4,9 +4,7 @@ package net.kroet.tradeshuffler.common.config;
  * User-facing update release channels for TradeShuffler.
  */
 public enum UpdateChannel {
-    STABLE,
-    BETA,
-    ALPHA;
+    STABLE, BETA, ALPHA;
 
     public static UpdateChannel fromString(String raw, UpdateChannel fallback) {
         if (raw == null || raw.isBlank()) {

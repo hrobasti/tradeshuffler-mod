@@ -3,8 +3,8 @@ package net.kroet.tradeshuffler.common.update;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import net.kroet.tradeshuffler.common.facade.UpdateFacade.UpdateCheckResult;
 import java.util.Map;
+import net.kroet.tradeshuffler.common.facade.UpdateFacade.UpdateCheckResult;
 import org.junit.jupiter.api.Test;
 
 class TradeShufflerUpdateServiceTest {
@@ -23,8 +23,7 @@ class TradeShufflerUpdateServiceTest {
     @Test
     void noUpdateStatusKeepsProviderSlotsButHasNoUpdateFlag() {
         TradeShufflerUpdateService.UpdateStatus status = TradeShufflerUpdateService.UpdateStatus.noUpdate(
-            Map.of("modrinth", "1.2.0", "curseforge", "1.2.1")
-        );
+                Map.of("modrinth", "1.2.0", "curseforge", "1.2.1"));
 
         assertFalse(status.hasUpdate());
         assertTrue(status.currentVersion() == null || status.currentVersion().isBlank());
@@ -35,4 +34,3 @@ class TradeShufflerUpdateServiceTest {
         assertTrue(status.providerVersionUrls().containsKey("curseforge"));
     }
 }
-

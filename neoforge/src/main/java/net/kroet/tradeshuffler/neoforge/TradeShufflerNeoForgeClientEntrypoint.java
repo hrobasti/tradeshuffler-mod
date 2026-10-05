@@ -13,8 +13,8 @@ import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 /**
- * Client-only NeoForge entrypoint (constructed only on the physical client): client config and
- * update notice.
+ * Client-only NeoForge entrypoint (constructed only on the physical client):
+ * client config and update notice.
  */
 @Mod(value = TradeShufflerConstants.MOD_ID, dist = Dist.CLIENT)
 public final class TradeShufflerNeoForgeClientEntrypoint {

@@ -12,8 +12,9 @@ import java.nio.file.Path;
 import java.util.Optional;
 
 /**
- * Shared JSON read/write helpers for the config stores. Reading never throws: a missing,
- * unreadable or malformed file yields an empty result so callers fall back to defaults.
+ * Shared JSON read/write helpers for the config stores. Reading never throws: a
+ * missing, unreadable or malformed file yields an empty result so callers fall
+ * back to defaults.
  */
 final class JsonConfigFiles {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();

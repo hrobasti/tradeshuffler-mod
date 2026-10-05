@@ -41,13 +41,13 @@ class TradeShufflerClientConfigStoreTest {
     void loadNormalizesOutOfRangeAndUnknownValues() throws IOException {
         Path file = tempDir.resolve("tradeshuffler.json");
         Files.writeString(file, """
-            {
-              "shuffleButtonOffsetX": -500,
-              "shuffleButtonOffsetY": 500,
-              "previewDimAlpha": 250,
-              "updateChannel": "nightly"
-            }
-            """);
+                {
+                  "shuffleButtonOffsetX": -500,
+                  "shuffleButtonOffsetY": 500,
+                  "previewDimAlpha": 250,
+                  "updateChannel": "nightly"
+                }
+                """);
 
         TradeShufflerClientConfig config = new TradeShufflerClientConfigStore(file).load();
 

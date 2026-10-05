@@ -11,8 +11,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 
 /**
- * Background update check whose result is flushed to chat once the player is available. Shared
- * between Fabric and NeoForge; each loader's client entrypoint owns one instance.
+ * Background update check whose result is flushed to chat once the player is
+ * available. Shared between Fabric and NeoForge; each loader's client
+ * entrypoint owns one instance.
  */
 public final class UpdateNoticeController {
     private volatile TradeShufflerUpdateService.UpdateStatus pendingUpdateStatus;
@@ -28,10 +29,9 @@ public final class UpdateNoticeController {
 
         CompletableFuture.runAsync(() -> {
             TradeShufflerUpdateService.UpdateStatus status = TradeShufflerUpdateService.checkForUpdates(
-                currentVersion,
-                minecraftVersion,
-                updateChannel
-            );
+                    currentVersion,
+                    minecraftVersion,
+                    updateChannel);
 
             if (status.hasUpdate()) {
                 pendingUpdateStatus = status;
@@ -51,11 +51,10 @@ public final class UpdateNoticeController {
         LocalPlayer player = minecraft.player;
 
         ClientMessages.displayClientMessageCompat(
-            player,
-            Component.translatable(TradeShufflerTextKeys.UPDATE_AVAILABLE, status.currentVersion(), status.latestVersion())
-                .withStyle(ChatFormatting.WHITE),
-            false
-        );
+                player,
+                Component.translatable(TradeShufflerTextKeys.UPDATE_AVAILABLE, status.currentVersion(), status.latestVersion())
+                        .withStyle(ChatFormatting.WHITE),
+                false);
         ClientMessages.displayProviderLine(player, status, "modrinth", "Modrinth");
         ClientMessages.displayProviderLine(player, status, "curseforge", "CurseForge");
 

@@ -18,8 +18,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 /**
- * All bundled locale files must be structurally identical to the en_us fallback: same keys in
- * the same order, and no blank values.
+ * All bundled locale files must be structurally identical to the en_us
+ * fallback: same keys in the same order, and no blank values.
  */
 class LocaleFilesConsistencyTest {
     private static final Path LANG_DIR = Path.of("src/main/resources/assets/tradeshuffler/lang");
