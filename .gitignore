@@ -1,0 +1,47 @@
+# Gradle
+.gradle/
+**/.gradle/
+
+# Build outputs
+build/
+**/build/
+out/
+dist/
+dist-archive/
+**/dist/
+**/dist-archive/
+bin/
+**/bin/
+
+# Java / JVM
+*.class
+hs_err_pid*
+replay_pid*
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+.classpath
+.project
+.settings/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Local runtime/config artifacts
+run/
+logs/
+crash-reports/
+
+# Loader-local work directories (generated)
+**/isolated/
+**/loom-cache/
+**/devlibs/
+
+# Claude Code local ruleset (kept out of version control)
+CLAUDE.md

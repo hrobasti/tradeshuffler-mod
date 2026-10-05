@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] Güncelleme mevcut! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: Sürüm %s",
+  "tradeshuffler.update.provider.error": "- %s: Alınamadı.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "Takasları karıştır"
+}

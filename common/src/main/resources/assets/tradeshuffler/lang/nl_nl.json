@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] Update beschikbaar! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: Versie %s",
+  "tradeshuffler.update.provider.error": "- %s: Ophalen mislukt.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "Ruilhandel opnieuw schudden"
+}

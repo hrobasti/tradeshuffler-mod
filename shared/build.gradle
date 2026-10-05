@@ -1,0 +1,40 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'java-library'
+}
+
+apply from: file('../gradle/matrix-defaults.gradle')
+apply from: file('../gradle/java-conventions.gradle')
+apply from: file('../gradle/mod-info.gradle')
+apply from: file('../gradle/turtlelib-dependency.gradle')
+def matrixTarget = resolveMatrixTarget('minecraft_version')
+applyJavaConventions(matrixTarget)
+
+// Minecraft-dependent runtime shared by both loaders: payloads, server-side services, client
+// screen logic and mixins (unlike :tradeshuffler-common, which stays Minecraft-free by design).
+// Compiled against a Fabric-shaped Minecraft classpath and bundled as plain classes + resources
+// into both the Fabric and NeoForge loader jars, like PermaClicker's client module.
+
+// Explicit -P values (passed per target by the matrix release builds) win over the matrix defaults.
+def resolvedMinecraftVersion = matrixTarget.minecraft
+def resolvedFabricLoaderVersion = providers.gradleProperty('fabric_loader_version').getOrElse(matrixTarget.fabricLoader)
+def resolvedFabricApiVersion = providers.gradleProperty('fabric_api_version').getOrElse(matrixTarget.fabricApi)
+
+dependencies {
+    minecraft "com.mojang:minecraft:${resolvedMinecraftVersion}"
+
+    // compileOnly: only needed so Loom's compile-time classpath fully resolves (Fabric API
+    // injects interfaces into vanilla classes at compile time); this module makes no direct
+    // Fabric API calls and must not leak these as transitive runtime deps to NeoForge consumers.
+    compileOnly "net.fabricmc:fabric-loader:${resolvedFabricLoaderVersion}"
+    compileOnly "net.fabricmc.fabric-api:fabric-api:${resolvedFabricApiVersion}"
+
+    api project(':tradeshuffler-common')
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
+}
+
+tasks.test {
+    useJUnitPlatform()
+}

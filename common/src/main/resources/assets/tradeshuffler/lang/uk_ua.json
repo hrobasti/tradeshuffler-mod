@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] Доступне оновлення! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: Версія %s",
+  "tradeshuffler.update.provider.error": "- %s: Не вдалося отримати.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "Перетасувати пропозиції"
+}

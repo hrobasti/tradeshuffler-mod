@@ -1,0 +1,122 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.147'
+}
+
+// The jar bundles the compiled classes of these modules, so they must be configured first
+// (alphabetically ':tradeshuffler-shared' would otherwise be evaluated after this project).
+evaluationDependsOn(':tradeshuffler-common')
+evaluationDependsOn(':tradeshuffler-shared')
+
+apply from: file('../gradle/matrix-defaults.gradle')
+apply from: file('../gradle/java-conventions.gradle')
+apply from: file('../gradle/mod-info.gradle')
+apply from: file('../gradle/turtlelib-dependency.gradle')
+def matrixTarget = resolveMatrixTarget('minecraft_version')
+def resolvedJavaLanguageVersion = applyJavaConventions(matrixTarget).toString()
+
+// Explicit -P values (passed per target by the matrix release builds) win over the matrix defaults.
+def resolvedMinecraftVersion = matrixTarget.minecraft
+def resolvedNeoForgeVersion = providers.gradleProperty('neoforge_version').getOrElse(matrixTarget.neoforge)
+
+def modNameForFile = (modInfo.name as String).replaceAll(/[^A-Za-z0-9]/, '')
+def mcVersionForFile = (resolvedMinecraftVersion as String).replace('.', '-')
+def neoForgeVersionForFile = (resolvedNeoForgeVersion as String).replace('.', '-')
+
+dependencies {
+    implementation project(':tradeshuffler-common')
+    implementation project(':tradeshuffler-shared')
+    implementation turtleLibDependency
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
+}
+
+tasks.named('processResources', ProcessResources) {
+    inputs.property('version', project.version)
+    inputs.property('mod_id', modInfo.id)
+    inputs.property('mod_name', modInfo.name)
+    inputs.property('minecraft_version', resolvedMinecraftVersion)
+    inputs.property('neoforge_version', resolvedNeoForgeVersion)
+    inputs.property('java_language_version', resolvedJavaLanguageVersion)
+    inputs.property('turtlelib_version', modInfo.turtleLibDependencyVersion)
+
+    filesMatching('META-INF/neoforge.mods.toml') {
+        expand([
+            file                  : [jarVersion: project.version],
+            mod_id                : modInfo.id,
+            mod_name              : modInfo.name,
+            minecraft_version     : resolvedMinecraftVersion,
+            neoforge_version      : resolvedNeoForgeVersion,
+            java_language_version : resolvedJavaLanguageVersion,
+            turtlelib_version     : modInfo.turtleLibDependencyVersion
+        ])
+    }
+}
+
+def commonProject = project(':tradeshuffler-common')
+def sharedProject = project(':tradeshuffler-shared')
+def distDir = layout.projectDirectory.dir('../dist')
+def distSourcesDir = layout.projectDirectory.dir('../dist/sources')
+def modLicenseFile = file('../LICENSE')
+
+neoForge {
+    version = resolvedNeoForgeVersion
+
+    mods {
+        tradeshuffler {
+            sourceSet sourceSets.main
+            sourceSet commonProject.sourceSets.main
+            sourceSet sharedProject.sourceSets.main
+        }
+    }
+
+    // Development runs (./gradlew :tradeshuffler-neoforge:runClient / runServer). TurtleLib is a
+    // separate mod at runtime: put its NeoForge jar into neoforge/run/mods for these runs.
+    runs {
+        client {
+            client()
+        }
+        server {
+            server()
+            programArgument '--nogui'
+        }
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.named('jar') {
+    from(commonProject.sourceSets.main.output)
+    from(sharedProject.sourceSets.main.output)
+    from(modLicenseFile) {
+        into 'META-INF'
+        rename { 'LICENSE' }
+    }
+
+    destinationDirectory = distDir
+    archiveFileName = "${modNameForFile}_${project.version}_MC-${mcVersionForFile}_NEOFORGE_${neoForgeVersionForFile}.jar"
+    manifest {
+        attributes(
+            'Implementation-Title': modInfo.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'kroet.net'
+        )
+    }
+}
+
+tasks.named('sourcesJar') {
+    from(commonProject.sourceSets.main.allSource)
+    from(sharedProject.sourceSets.main.allSource)
+    from(modLicenseFile) {
+        into 'META-INF'
+        rename { 'LICENSE' }
+    }
+
+    destinationDirectory = distSourcesDir
+    archiveFileName = "${modNameForFile}_${project.version}_MC-${mcVersionForFile}_NEOFORGE_${neoForgeVersionForFile}-source.jar"
+}
+
+// The jar / sourcesJar tasks write directly into dist (and dist/sources) via destinationDirectory,
+// so no extra copy step is needed. A separate Copy-into-dist task would also trip Gradle 9.6+
+// overlapping-output validation because both loader subprojects share the same dist directory.

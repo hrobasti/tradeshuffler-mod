@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] ¡Actualización disponible! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: Versión %s",
+  "tradeshuffler.update.provider.error": "- %s: Error al obtener datos.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "Barajar ofertas"
+}

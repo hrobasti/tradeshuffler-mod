@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] アップデートがあります! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: バージョン %s",
+  "tradeshuffler.update.provider.error": "- %s: 取得に失敗しました。",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "取引をシャッフル"
+}

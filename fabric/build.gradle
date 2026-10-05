@@ -1,0 +1,117 @@
+plugins {
+    id 'net.fabricmc.fabric-loom' version '1.17-SNAPSHOT'
+    id 'java'
+}
+
+// The jar bundles the compiled classes of these modules, so they must be configured first
+// (alphabetically ':tradeshuffler-shared' would otherwise be evaluated after this project).
+evaluationDependsOn(':tradeshuffler-common')
+evaluationDependsOn(':tradeshuffler-shared')
+
+apply from: file('../gradle/matrix-defaults.gradle')
+apply from: file('../gradle/java-conventions.gradle')
+apply from: file('../gradle/mod-info.gradle')
+apply from: file('../gradle/turtlelib-dependency.gradle')
+def matrixTarget = resolveMatrixTarget('minecraft_version')
+def resolvedJavaLanguageVersion = applyJavaConventions(matrixTarget).toString()
+
+// Explicit -P values (passed per target by the matrix release builds) win over the matrix defaults.
+def resolvedMinecraftVersion = matrixTarget.minecraft
+def resolvedFabricLoaderVersion = providers.gradleProperty('fabric_loader_version').getOrElse(matrixTarget.fabricLoader)
+def resolvedFabricApiVersion = providers.gradleProperty('fabric_api_version').getOrElse(matrixTarget.fabricApi)
+def resolvedModMenuVersion = providers.gradleProperty('modmenu_version').getOrElse(matrixTarget.modmenu)
+
+def modNameForFile = (modInfo.name as String).replaceAll(/[^A-Za-z0-9]/, '')
+def mcVersionForFile = (resolvedMinecraftVersion as String).replace('.', '-')
+def fabricVersionForFile = (resolvedFabricLoaderVersion as String).replace('.', '-').replace('+', '-').replace('_', '-')
+
+repositories {
+    maven { url = 'https://maven.fabricmc.net/' }
+    maven {
+        name = 'Terraformers'
+        url = 'https://maven.terraformersmc.com/'
+    }
+    mavenCentral()
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${resolvedMinecraftVersion}"
+
+    implementation "net.fabricmc:fabric-loader:${resolvedFabricLoaderVersion}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${resolvedFabricApiVersion}"
+    implementation "com.terraformersmc:modmenu:${resolvedModMenuVersion}"
+
+    implementation project(':tradeshuffler-common')
+    implementation project(':tradeshuffler-shared')
+    implementation turtleLibDependency
+
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
+}
+
+def commonMainOutput = project(':tradeshuffler-common').sourceSets.main.output
+def sharedMainOutput = project(':tradeshuffler-shared').sourceSets.main.output
+def distDir = layout.projectDirectory.dir('../dist')
+def distSourcesDir = layout.projectDirectory.dir('../dist/sources')
+def modLicenseFile = file('../LICENSE')
+
+tasks.named('processResources', ProcessResources) {
+    inputs.property('version', project.version)
+    inputs.property('mod_id', modInfo.id)
+    inputs.property('fabric_loader_version', resolvedFabricLoaderVersion)
+    inputs.property('fabric_api_version', resolvedFabricApiVersion)
+    inputs.property('minecraft_version', resolvedMinecraftVersion)
+    inputs.property('java_language_version', resolvedJavaLanguageVersion)
+    inputs.property('turtlelib_version', modInfo.turtleLibDependencyVersion)
+
+    filesMatching('fabric.mod.json') {
+        expand([
+            version               : project.version,
+            mod_id                : modInfo.id,
+            fabric_loader_version : resolvedFabricLoaderVersion,
+            fabric_api_version    : resolvedFabricApiVersion,
+            minecraft_version     : resolvedMinecraftVersion,
+            java_language_version : resolvedJavaLanguageVersion,
+            turtlelib_version     : modInfo.turtleLibDependencyVersion
+        ])
+    }
+}
+
+tasks.test {
+    useJUnitPlatform()
+}
+
+tasks.named('jar') {
+    from(commonMainOutput)
+    from(sharedMainOutput)
+    from(modLicenseFile) {
+        into 'META-INF'
+        rename { 'LICENSE' }
+    }
+
+    destinationDirectory = distDir
+    archiveFileName = "${modNameForFile}_${project.version}_MC-${mcVersionForFile}_FABRIC_${fabricVersionForFile}.jar"
+    manifest {
+        attributes(
+            'Implementation-Title': modInfo.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'kroet.net'
+        )
+    }
+}
+
+tasks.named('sourcesJar') {
+    from(project(':tradeshuffler-common').sourceSets.main.allSource)
+    from(project(':tradeshuffler-shared').sourceSets.main.allSource)
+    from(modLicenseFile) {
+        into 'META-INF'
+        rename { 'LICENSE' }
+    }
+
+    destinationDirectory = distSourcesDir
+    archiveFileName = "${modNameForFile}_${project.version}_MC-${mcVersionForFile}_FABRIC_${fabricVersionForFile}-source.jar"
+}
+
+// The jar / sourcesJar tasks write directly into dist (and dist/sources) via destinationDirectory,
+// so no extra copy step is needed. A separate Copy-into-dist task would also trip Gradle 9.6+
+// overlapping-output validation because both loader subprojects share the same dist directory.

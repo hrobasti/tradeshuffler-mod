@@ -1,0 +1,44 @@
+pluginManagement {
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        maven { url = 'https://maven.neoforged.net/releases' }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '1.0.0'
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        maven { url = 'https://maven.fabricmc.net/' }
+        mavenCentral()
+        maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://libraries.minecraft.net' }
+    }
+}
+
+rootProject.name = 'tradeshuffler-mod'
+
+// Same project names as in the hrobasti-mods workspace, so the module build scripts
+// run unchanged in a standalone checkout and inside the workspace.
+include 'tradeshuffler-common'
+include 'tradeshuffler-shared'
+include 'tradeshuffler-neoforge'
+include 'tradeshuffler-fabric'
+
+project(':tradeshuffler-common').projectDir = file('common')
+project(':tradeshuffler-shared').projectDir = file('shared')
+project(':tradeshuffler-neoforge').projectDir = file('neoforge')
+project(':tradeshuffler-fabric').projectDir = file('fabric')
+
+// Default: TurtleLib core is resolved from its GitHub release assets (see
+// gradle/turtlelib-dependency.gradle). Pass -PuseLocalTurtleLib=true to build against a
+// sibling ../turtle-lib-mod checkout instead.
+if (Boolean.parseBoolean(providers.gradleProperty('useLocalTurtleLib').getOrElse('false'))) {
+    include 'turtlelib-core'
+    project(':turtlelib-core').projectDir = file('../turtle-lib-mod/core')
+}

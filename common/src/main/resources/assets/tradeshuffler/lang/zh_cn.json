@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] 有可用更新！%s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s：版本 %s",
+  "tradeshuffler.update.provider.error": "- %s：获取失败。",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "刷新交易"
+}

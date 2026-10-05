@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] 업데이트 가능! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: 버전 %s",
+  "tradeshuffler.update.provider.error": "- %s: 가져오기 실패.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "거래 섞기"
+}

@@ -1,0 +1,10 @@
+{
+  "tradeshuffler.title": "TradeShuffler",
+
+  "tradeshuffler.update.available": "[TradeShuffler] تحديث متاح! %s -> %s",
+  "tradeshuffler.update.provider.ok": "- %s: الإصدار %s",
+  "tradeshuffler.update.provider.error": "- %s: فشل الجلب.",
+
+  "key.category.tradeshuffler.tradeshuffler": "TradeShuffler",
+  "key.tradeshuffler.shuffle": "إعادة خلط العروض"
+}
