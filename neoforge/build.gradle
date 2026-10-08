@@ -58,14 +58,31 @@ def distDir = layout.projectDirectory.dir('../dist')
 def distSourcesDir = layout.projectDirectory.dir('../dist/sources')
 def modLicenseFile = file('../LICENSE')
 
+// Game tests: shared test functions plus the NeoForge registration; never part of the mod jar.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.output + sharedProject.sourceSets.gametest.output
+        runtimeClasspath += sourceSets.main.output + sharedProject.sourceSets.gametest.output
+    }
+}
+
+configurations {
+    gametestImplementation.extendsFrom implementation
+}
+
 neoForge {
     version = resolvedNeoForgeVersion
+    addModdingDependenciesTo(sourceSets.gametest)
 
     mods {
         tradeshuffler {
             sourceSet sourceSets.main
             sourceSet commonProject.sourceSets.main
             sourceSet sharedProject.sourceSets.main
+        }
+        tradeshuffler_gametest {
+            sourceSet sourceSets.gametest
+            sourceSet sharedProject.sourceSets.gametest
         }
     }
 
@@ -74,10 +91,44 @@ neoForge {
     runs {
         client {
             client()
+            loadedMods = [mods.tradeshuffler]
         }
         server {
             server()
             programArgument '--nogui'
+            loadedMods = [mods.tradeshuffler]
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            sourceSet = sourceSets.gametest
+            gameDirectory = project.file('build/run/gameTest')
+            systemProperty 'neoforge.enableGameTest', 'true'
+        }
+    }
+}
+
+// The game test server needs TurtleLib as an installed mod; only the hrobasti-mods workspace
+// has its loader projects (a lone repository only includes the TurtleLib core).
+def gameTestRunDir = layout.projectDirectory.dir('build/run/gameTest')
+def turtleLibNeoForge = findProject(':turtlelib-neoforge')
+
+tasks.register('prepareGameTestRun', Sync) {
+    description = 'Installs TurtleLib and accepts the EULA for the game test server.'
+    into gameTestRunDir.dir('mods')
+    if (turtleLibNeoForge != null) {
+        from(turtleLibNeoForge.tasks.named('jar'))
+    }
+    doLast {
+        gameTestRunDir.file('eula.txt').asFile.text = 'eula=true\n'
+    }
+}
+
+tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    dependsOn 'prepareGameTestRun'
+    // prepareGameTestRun is skipped without sources, so the check lives here.
+    doFirst {
+        if (turtleLibNeoForge == null) {
+            throw new GradleException('Game tests need the TurtleLib loader projects of the hrobasti-mods workspace.')
         }
     }
 }

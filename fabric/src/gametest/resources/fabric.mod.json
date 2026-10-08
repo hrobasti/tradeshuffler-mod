@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "tradeshuffler_gametest",
+  "version": "1.0.0",
+  "name": "TradeShuffler game tests",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "net.kroet.tradeshuffler.fabric.gametest.TradeShufflerFabricGameTests"
+    ]
+  },
+  "depends": {
+    "tradeshuffler": "*",
+    "fabric-gametest-api-v1": "*"
+  }
+}

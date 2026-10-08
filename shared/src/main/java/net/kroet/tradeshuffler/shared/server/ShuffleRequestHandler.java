@@ -42,11 +42,12 @@ public final class ShuffleRequestHandler {
         ShuffleService.shuffle(player, (Villager) trader, (MerchantMenu) open);
     }
 
-    /** Called when a server starts, so no cooldown carries over between worlds. */
+    /** Called when a player leaves, so the cooldown map does not grow. */
     public static void onPlayerLeft(UUID playerId) {
         COOLDOWN.forget(playerId);
     }
 
+    /** Called when a server starts, so no cooldown carries over between worlds. */
     public static void reset() {
         COOLDOWN.clear();
     }

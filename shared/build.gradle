@@ -38,3 +38,11 @@ dependencies {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Game test functions shared by both loaders' game test runs; never part of a mod jar.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
+    }
+}

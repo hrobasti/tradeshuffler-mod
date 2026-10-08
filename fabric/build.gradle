@@ -49,6 +49,14 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
 }
 
+// Game tests: shared test functions plus the Fabric registration; never part of the mod jar.
+sourceSets {
+    gametest {
+        compileClasspath += sourceSets.main.compileClasspath + sourceSets.main.output + project(':tradeshuffler-shared').sourceSets.gametest.output
+        runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output + project(':tradeshuffler-shared').sourceSets.gametest.output
+    }
+}
+
 // Dev runs treat all three source sets as one mod, so resources from common (lang files) and
 // shared (textures, mixin configs) are loaded like in the bundled jar.
 loom {
@@ -57,6 +65,47 @@ loom {
             sourceSet sourceSets.main
             sourceSet project(':tradeshuffler-common').sourceSets.main
             sourceSet project(':tradeshuffler-shared').sourceSets.main
+        }
+        tradeshuffler_gametest {
+            sourceSet sourceSets.gametest
+            sourceSet project(':tradeshuffler-shared').sourceSets.gametest
+        }
+    }
+
+    runs {
+        gameTest {
+            server()
+            name = 'Game Test'
+            source sourceSets.gametest
+            property 'fabric-api.gametest'
+            runDir 'build/run/gameTest'
+            ideConfigGenerated false
+        }
+    }
+}
+
+// The game test server needs TurtleLib as an installed mod; only the hrobasti-mods workspace
+// has its loader projects (a lone repository only includes the TurtleLib core).
+def gameTestRunDir = layout.projectDirectory.dir('build/run/gameTest')
+def turtleLibFabric = findProject(':turtlelib-fabric')
+
+tasks.register('prepareGameTestRun', Sync) {
+    description = 'Installs TurtleLib and accepts the EULA for the game test server.'
+    into gameTestRunDir.dir('mods')
+    if (turtleLibFabric != null) {
+        from(turtleLibFabric.tasks.named('jar'))
+    }
+    doLast {
+        gameTestRunDir.file('eula.txt').asFile.text = 'eula=true\n'
+    }
+}
+
+tasks.matching { it.name == 'runGameTest' }.configureEach {
+    dependsOn 'prepareGameTestRun'
+    // prepareGameTestRun is skipped without sources, so the check lives here.
+    doFirst {
+        if (turtleLibFabric == null) {
+            throw new GradleException('Game tests need the TurtleLib loader projects of the hrobasti-mods workspace.')
         }
     }
 }

@@ -1,0 +1,18 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mods]]
+modId="tradeshuffler_gametest"
+version="1.0.0"
+displayName="TradeShuffler game tests"
+description='''
+Game tests for TradeShuffler; only loaded by the game test server.
+'''
+
+[[dependencies.tradeshuffler_gametest]]
+modId="tradeshuffler"
+type="required"
+versionRange="[0,)"
+ordering="AFTER"
+side="BOTH"

@@ -104,6 +104,18 @@ tasks.register('testTradeShuffler') {
     )
 }
 
+// Server game tests on both loaders; each run ends with a non-zero exit code when a test fails.
+// Needs the hrobasti-mods workspace, because the test servers install the TurtleLib loader jars.
+tasks.register('gameTestTradeShuffler') {
+    group = 'verification'
+    description = 'Runs the TradeShuffler game tests on a Fabric and a NeoForge test server.'
+    dependsOn(':tradeshuffler-fabric:runGameTest', ':tradeshuffler-neoforge:runGameTestServer')
+}
+
+project(':tradeshuffler-neoforge').tasks.matching { it.name == 'runGameTestServer' }.configureEach {
+    mustRunAfter(':tradeshuffler-fabric:runGameTest')
+}
+
 def neoForgeMatrixBuildTasks = matrixTargets.collect { target ->
     def normalizedMc = target.minecraft.replace('.', '_')
     def normalizedNeo = target.neoforge.replace('.', '_').replace('-', '_')
