@@ -1,5 +1,7 @@
 plugins {
     id 'java-library'
+    // Lets the Fabric dev run include this module's resources (lang files) in the mod.
+    id 'net.fabricmc.fabric-loom-companion' version '1.17-SNAPSHOT'
 }
 
 apply from: file('../gradle/matrix-defaults.gradle')
@@ -15,8 +17,7 @@ repositories {
 
 dependencies {
     api turtleLibDependency
-    // Used directly (config store); no longer only a transitive TurtleLib dependency, because
-    // the release-asset jar carries no dependency metadata.
+    // The config store uses Gson directly; the TurtleLib release asset carries no dependency metadata.
     implementation 'com.google.code.gson:gson:2.10.1'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.12.1'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'

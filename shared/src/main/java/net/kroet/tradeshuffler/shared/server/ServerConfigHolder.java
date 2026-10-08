@@ -28,8 +28,7 @@ public final class ServerConfigHolder {
         try {
             store.save(current);
         } catch (IOException ignored) {
-            // Best-effort: the loaded (or default) values stay active even if the file is
-            // read-only.
+            // The loaded (or default) values stay active if the file is read-only.
         }
         return current;
     }

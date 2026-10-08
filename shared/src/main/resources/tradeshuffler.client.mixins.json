@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "package": "net.kroet.tradeshuffler.shared.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "AbstractContainerScreenMixin",
+    "MerchantScreenAccessor",
+    "MerchantScreenMixin",
+    "MerchantScreenTradeOfferButtonMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

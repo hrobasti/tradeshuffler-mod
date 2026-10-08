@@ -49,6 +49,18 @@ dependencies {
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.12.1'
 }
 
+// Dev runs treat all three source sets as one mod, so resources from common (lang files) and
+// shared (textures, mixin configs) are loaded like in the bundled jar.
+loom {
+    mods {
+        tradeshuffler {
+            sourceSet sourceSets.main
+            sourceSet project(':tradeshuffler-common').sourceSets.main
+            sourceSet project(':tradeshuffler-shared').sourceSets.main
+        }
+    }
+}
+
 def commonMainOutput = project(':tradeshuffler-common').sourceSets.main.output
 def sharedMainOutput = project(':tradeshuffler-shared').sourceSets.main.output
 def distDir = layout.projectDirectory.dir('../dist')

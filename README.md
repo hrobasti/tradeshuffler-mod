@@ -2,16 +2,25 @@
 
 TradeShuffler improves villager trading:
 
-- **Shuffle trades:** re-roll the trades of a villager you have not traded with yet, right from the trading screen.
-- **Trade preview:** see the trades a villager will unlock at its future levels, darkened and not selectable.
+- **Shuffle trades:** re-roll the trades of a novice villager you have not traded with yet, right from the trading screen. If shuffling is not possible, the button tells you why.
+- **Trade preview:** see the trades a villager will unlock at its future levels, darkened and not selectable. The preview is binding: the villager unlocks exactly what it shows.
 
-TradeShuffler is in development. The features above are not available yet.
+TradeShuffler is in development towards version 1.0.0. Full documentation: [Wiki](https://github.com/hrobasti/tradeshuffler-mod/wiki).
 
 ## Quick start for players 🎮
 
 1. Put `TradeShuffler` and `TurtleLib` (required dependency) in the `mods` folder.
 2. Install it on the server too: TradeShuffler's features need it on both the client and the server. In single-player this happens automatically.
-3. Start the game.
+3. Start the game. Settings: Mod Menu (Fabric) or the mod list (NeoForge). An optional shuffle key can be bound under Controls → Key Binds → TradeShuffler.
+
+## Update check & privacy 🔔
+
+When the game starts, TradeShuffler checks once in the background whether a newer version exists, and shows a chat message with links after you join a world. The check is on by default; turn it off with **Update check** in the settings. The channel (**Stable**: releases only, **Beta**: releases and betas, **Alpha**: everything) decides which versions count.
+
+- **Queried services** (only platforms where TradeShuffler is published): `api.modrinth.com` (Modrinth, official API) and `api.cfwidget.com` (CFWidget, an unofficial third-party service that mirrors CurseForge data; it publishes no privacy policy and states that it stores no identifiable information).
+- **Transmitted data:** your IP address (part of every web request), the mod name and version (user agent), the Minecraft version, the loader (Fabric or NeoForge) and the project ID. No account, player or world data.
+- Modrinth's handling of request data: [Modrinth privacy policy](https://modrinth.com/legal/privacy).
+- With Mod Menu installed (Fabric), Mod Menu additionally checks your installed mods on Modrinth; that check is configured in Mod Menu's own settings.
 
 ## Quick start for devs 🛠️
 

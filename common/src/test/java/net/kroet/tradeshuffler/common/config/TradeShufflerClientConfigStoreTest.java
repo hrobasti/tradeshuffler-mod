@@ -35,6 +35,21 @@ class TradeShufflerClientConfigStoreTest {
         Files.writeString(file, "{ not-valid-json ");
 
         assertEquals(TradeShufflerClientConfig.defaults(), new TradeShufflerClientConfigStore(file).load());
+        assertEquals("{ not-valid-json ", Files.readString(tempDir.resolve("tradeshuffler.json.broken")));
+    }
+
+    @Test
+    void saveReplacesTheFileWithoutLeftovers() throws IOException {
+        Path file = tempDir.resolve("tradeshuffler.json");
+        TradeShufflerClientConfigStore store = new TradeShufflerClientConfigStore(file);
+
+        store.save(TradeShufflerClientConfig.defaults());
+        store.save(TradeShufflerClientConfig.defaults());
+
+        assertEquals(TradeShufflerClientConfig.defaults(), store.load());
+        try (var files = Files.list(tempDir)) {
+            assertEquals(1, files.count());
+        }
     }
 
     @Test

@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "net.kroet.tradeshuffler.shared.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "AbstractVillagerInvoker",
+    "AbstractVillagerNotifyTradeMixin",
+    "MerchantMenuAccessor",
+    "MobConversionMixin",
+    "VillagerInvoker",
+    "VillagerTradePlanMixin",
+    "ZombieVillagerTradePlanMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -1,36 +1,59 @@
 package net.kroet.tradeshuffler.common.update;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 import net.kroet.tradeshuffler.common.facade.UpdateFacade.UpdateCheckResult;
+import net.kroet.tradeshuffler.common.update.TradeShufflerUpdateService.UpdateSources;
 import org.junit.jupiter.api.Test;
 
 class TradeShufflerUpdateServiceTest {
+    private static final UpdateSources SOURCES = new UpdateSources(
+            "https://modrinth.com/project/tradeshuffler-mod",
+            "tradeshuffler-mod",
+            "https://www.curseforge.com/minecraft/mc-mods/tradeshuffler-mod",
+            "1487139");
+
     @Test
-    void detectsOnlyStrictlyGreaterVersions() {
-        UpdateCheckResult newer = new UpdateCheckResult("1.2.0", "1.3.0", Map.of("modrinth", "1.3.0"));
-        assertTrue(TradeShufflerUpdateService.hasActualUpdate(newer));
+    void keepsReleaseUrlsAndFallsBackToProjectPage() {
+        UpdateCheckResult result = new UpdateCheckResult(
+                "2.0.0",
+                "2.1.0",
+                Map.of(
+                        UpdateProvider.MODRINTH, new ProviderRelease("2.1.0", "https://modrinth.com/project/p/version/v"),
+                        UpdateProvider.CURSEFORGE, new ProviderRelease("2.1.0", null)),
+                Map.of());
 
-        UpdateCheckResult equal = new UpdateCheckResult("1.2.0", "1.2.0", Map.of("modrinth", "1.2.0"));
-        assertFalse(TradeShufflerUpdateService.hasActualUpdate(equal));
+        TradeShufflerUpdateService.UpdateStatus status = TradeShufflerUpdateService.toStatus(result, SOURCES);
 
-        UpdateCheckResult older = new UpdateCheckResult("1.2.0", "1.1.9", Map.of("modrinth", "1.1.9"));
-        assertFalse(TradeShufflerUpdateService.hasActualUpdate(older));
+        assertTrue(status.hasUpdate());
+        assertEquals("https://modrinth.com/project/p/version/v", status.releases().get(UpdateProvider.MODRINTH).url());
+        assertEquals(
+                "https://www.curseforge.com/minecraft/mc-mods/tradeshuffler-mod",
+                status.releases().get(UpdateProvider.CURSEFORGE).url());
     }
 
     @Test
-    void noUpdateStatusKeepsProviderSlotsButHasNoUpdateFlag() {
-        TradeShufflerUpdateService.UpdateStatus status = TradeShufflerUpdateService.UpdateStatus.noUpdate(
-                Map.of("modrinth", "1.2.0", "curseforge", "1.2.1"));
+    void failedPlatformIsReportedWithoutRelease() {
+        UpdateCheckResult result = new UpdateCheckResult(
+                "2.0.0",
+                "2.1.0",
+                Map.of(UpdateProvider.MODRINTH, new ProviderRelease("2.1.0", null)),
+                Map.of(UpdateProvider.CURSEFORGE, "IOException: HTTP 503"));
 
-        assertFalse(status.hasUpdate());
-        assertTrue(status.currentVersion() == null || status.currentVersion().isBlank());
-        assertTrue(status.latestVersion() == null || status.latestVersion().isBlank());
-        assertTrue(status.providerVersions().containsKey("modrinth"));
-        assertTrue(status.providerVersions().containsKey("curseforge"));
-        assertTrue(status.providerVersionUrls().containsKey("modrinth"));
-        assertTrue(status.providerVersionUrls().containsKey("curseforge"));
+        TradeShufflerUpdateService.UpdateStatus status = TradeShufflerUpdateService.toStatus(result, SOURCES);
+
+        assertFalse(status.releases().containsKey(UpdateProvider.CURSEFORGE));
+        assertEquals("IOException: HTTP 503", status.errors().get(UpdateProvider.CURSEFORGE));
+    }
+
+    @Test
+    void noLatestVersionMeansNoUpdate() {
+        UpdateCheckResult result = new UpdateCheckResult("2.0.0", null, Map.of(), Map.of());
+
+        assertFalse(TradeShufflerUpdateService.toStatus(result, SOURCES).hasUpdate());
+        assertFalse(TradeShufflerUpdateService.UpdateStatus.notConfigured().hasUpdate());
     }
 }

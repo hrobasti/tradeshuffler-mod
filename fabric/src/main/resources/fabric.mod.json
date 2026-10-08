@@ -3,11 +3,19 @@
   "id": "${mod_id}",
   "version": "${version}",
   "name": "TradeShuffler",
-  "description": "Shuffle the trades of villagers you have not traded with yet, and preview the trades they unlock at future levels.",
-  "authors": ["kroet.net"],
+  "description": "Re-roll the trades of villagers you have not traded with yet, and preview the trades they unlock at future levels.",
+  "authors": [
+    {
+      "name": "kroet.net",
+      "contact": {
+        "homepage": "https://kroet.net"
+      }
+    }
+  ],
   "license": "MIT",
+  "icon": "assets/tradeshuffler/icon.png",
   "contact": {
-    "homepage": "https://github.com/hrobasti/tradeshuffler-mod",
+    "homepage": "https://kroet.net",
     "sources": "https://github.com/hrobasti/tradeshuffler-mod",
     "issues": "https://github.com/hrobasti/tradeshuffler-mod/issues"
   },
@@ -16,8 +24,10 @@
     "main": ["net.kroet.tradeshuffler.fabric.TradeShufflerFabricBootstrap"],
     "client": [
       "net.kroet.tradeshuffler.fabric.TradeShufflerFabricClientBootstrap"
-    ]
+    ],
+    "modmenu": ["net.kroet.tradeshuffler.fabric.TradeShufflerModMenuApi"]
   },
+  "mixins": ["tradeshuffler.mixins.json", "tradeshuffler.client.mixins.json"],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": ">=${fabric_api_version}",
@@ -31,9 +41,8 @@
   "custom": {
     "modmenu": {
       "links": {
-        "modmenu.source": "https://github.com/hrobasti/tradeshuffler-mod",
         "modmenu.github_sponsors": "https://github.com/sponsors/hrobasti",
-        "modmenu.kofi": "https://ko-fi.com/hrobasti"
+        "modmenu.kofi": "https://ko-fi.com/kroet"
       }
     }
   }

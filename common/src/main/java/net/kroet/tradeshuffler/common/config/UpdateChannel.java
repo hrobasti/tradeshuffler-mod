@@ -1,5 +1,7 @@
 package net.kroet.tradeshuffler.common.config;
 
+import java.util.Locale;
+
 /**
  * User-facing update release channels for TradeShuffler.
  */
@@ -11,7 +13,7 @@ public enum UpdateChannel {
             return fallback;
         }
         try {
-            return UpdateChannel.valueOf(raw.trim().toUpperCase());
+            return UpdateChannel.valueOf(raw.trim().toUpperCase(Locale.ROOT));
         } catch (IllegalArgumentException ignored) {
             return fallback;
         }
