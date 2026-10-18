@@ -1,17 +1,56 @@
 # TradeShuffler 🔄
 
-TradeShuffler improves villager trading:
-
-- **Shuffle trades:** re-roll the trades of a novice villager you have not traded with yet, right from the trading screen. If shuffling is not possible, the button tells you why.
-- **Trade preview:** see the trades a villager will unlock at its future levels, darkened and not selectable. The preview is binding: the villager unlocks exactly what it shows.
-
-TradeShuffler is in development towards version 1.0.0. Full documentation: [Wiki](https://github.com/hrobasti/tradeshuffler-mod/wiki).
+TradeShuffler improves villager trading: re-roll the trades of a novice villager you have not traded with yet, right from the trading screen, and see the trades it will unlock at its future levels. The preview is binding: the villager unlocks exactly what it shows.
 
 ## Quick start for players 🎮
 
 1. Put `TradeShuffler` and `TurtleLib` (required dependency) in the `mods` folder.
-2. Install it on the server too: TradeShuffler's features need it on both the client and the server. In single-player this happens automatically.
-3. Start the game. Settings: Mod Menu (Fabric) or the mod list (NeoForge). An optional shuffle key can be bound under Controls → Key Binds → TradeShuffler.
+2. For multiplayer, install both on the server too: the server generates the trades, so the features only appear when TradeShuffler runs there as well. In single-player this happens automatically.
+3. Start the game and open a villager's trading screen.
+4. Optional: bind the shuffle key under Controls → Key Binds → TradeShuffler, and adjust the settings via Mod Menu (Fabric) or the mod list (NeoForge).
+
+## What TradeShuffler provides ✨
+
+- **Shuffle trades:** a button next to the trading window re-rolls the trades of a novice villager you have never traded with
+- **Trade preview:** the trading window also lists the trades of the villager's future levels (Apprentice to Master), darkened, with a colored level stripe and an "unlocks at" tooltip
+- **Binding preview:** on level-up the villager unlocks exactly the previewed trades, also after saving and reloading, and after a zombie infection and cure
+- **Clear reasons:** when shuffling is not possible, the button is greyed out and its tooltip says why
+- optional key binding for shuffling (unbound by default)
+- in-game settings for button position, preview darkening and level stripe, on Fabric and NeoForge
+- server settings for admins: turn shuffling off, require a job site, set a cooldown
+- update check via Modrinth and CurseForge (Stable / Beta / Alpha), can be turned off (see below)
+
+## Runtime behavior 🧭
+
+- Shuffling works only while **no trade has ever been made** with that villager. After the first trade, the button stays greyed out for good, also after restocks and restarts.
+- Only novice villagers with a job site can be shuffled. Wandering traders, nitwits and unemployed villagers have no button.
+- After shuffling, the preview appears about two seconds after the last shuffle, so quick re-rolls stay smooth on the server.
+- Preview rows cannot be selected. Their prices are base prices; discounts (reputation, Hero of the Village) apply once the trade is unlocked.
+- A villager nobody traded with can still be shuffled after a zombie infection and cure.
+- Mixed installations are safe: without TradeShuffler on the server, there is no button and no preview; players without TradeShuffler see vanilla trading on a server that has it.
+
+## Configuration ⚙️
+
+Client settings are managed in the in-game config screen (Mod Menu on Fabric, the mod list on NeoForge). Server admins set `shuffleEnabled`, `previewEnabled`, `requireJobSite` and `shuffleCooldownTicks` in `config/tradeshuffler-server.json`; details in the [wiki](https://github.com/hrobasti/tradeshuffler-mod/wiki).
+
+## Supported languages 🌍
+
+TradeShuffler bundles each locale as a JSON file. Included languages:
+
+- 🇺🇸 English (en\_US)
+- 🇩🇪 German (de\_DE)
+- 🇸🇦 Arabic (ar\_SA)
+- 🇪🇸 Spanish (es\_ES)
+- 🇫🇷 French (fr\_FR)
+- 🇮🇹 Italian (it\_IT)
+- 🇯🇵 Japanese (ja\_JP)
+- 🇰🇷 Korean (ko\_KR)
+- 🇳🇱 Dutch (nl\_NL)
+- 🇵🇱 Polish (pl\_PL)
+- 🇵🇹 Portuguese (pt\_PT)
+- 🇹🇷 Turkish (tr\_TR)
+- 🇺🇦 Ukrainian (uk\_UA)
+- 🇨🇳 Simplified Chinese (zh\_CN)
 
 ## Update check & privacy 🔔
 
@@ -34,7 +73,7 @@ Minecraft, Java and loader versions come from [`config/matrix-targets.json`](con
 
 **TurtleLib:** the build downloads the [TurtleLib](https://github.com/hrobasti/turtle-lib-mod) core jar from its GitHub release. The version is set by `turtlelib_dependency_version` in [`version.properties`](version.properties).
 
-To work on both at once, clone TurtleLib next to this repository (`../turtle-lib-mod`) and add `-PuseLocalTurtleLib=true`.
+To work on both at once, clone TurtleLib next to this repository (`../turtle-lib-mod`) and add `-PuseLocalTurtleLib=true`. The server game tests (`gameTestTradeShuffler`) need the full development workspace; see the Dev Guide.
 
 ## AI support & privacy transparency 🤖
 
@@ -43,6 +82,10 @@ Parts of the source code and documentation were created with AI assistance.
 - **No personal player data is used** in this process.
 - Ideas, design decisions, and quality standards come from humans.
 - Quality assurance is reviewed and validated by humans.
+
+## Developer notes 🧩
+
+TradeShuffler uses TurtleLib only through `UpdateFacade` in `common`; no other code imports TurtleLib. Translations use Minecraft's lang files. Minecraft code shared by both loaders lives in `shared`; module layout, mixins and the trade-plan design are described in the [Dev Guide](https://github.com/hrobasti/tradeshuffler-mod/wiki).
 
 ## License 📄
 
