@@ -42,4 +42,9 @@ public final class TradeShufflerFabricGameTests {
     public void rapidShufflesGeneratePlanOnceSettled(GameTestHelper helper) {
         TradeShufflerGameTests.rapidShufflesGeneratePlanOnceSettled(helper);
     }
+
+    @GameTest(maxTicks = TradeShufflerGameTests.MAX_TICKS)
+    public void zeroXpTradeLocksShuffling(GameTestHelper helper) {
+        TradeShufflerGameTests.zeroXpTradeLocksShuffling(helper);
+    }
 }

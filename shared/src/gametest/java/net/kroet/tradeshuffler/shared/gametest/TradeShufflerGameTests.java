@@ -35,6 +35,9 @@ import net.minecraft.world.entity.npc.villager.Villager;
 import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
 import net.minecraft.world.inventory.MerchantMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.block.Block;
@@ -70,6 +73,7 @@ public final class TradeShufflerGameTests {
         tests.put("plan_and_traded_flag_survive_saving", TradeShufflerGameTests::planAndTradedFlagSurviveSaving);
         tests.put("shuffle_request_rerolls_until_first_trade", TradeShufflerGameTests::shuffleRequestRerollsUntilFirstTrade);
         tests.put("rapid_shuffles_generate_plan_once_settled", TradeShufflerGameTests::rapidShufflesGeneratePlanOnceSettled);
+        tests.put("zero_xp_trade_locks_shuffling", TradeShufflerGameTests::zeroXpTradeLocksShuffling);
         ALL = Collections.unmodifiableMap(tests);
     }
 
@@ -155,6 +159,29 @@ public final class TradeShufflerGameTests {
             MerchantOffers afterTrade = villager.getOffers();
             ShuffleRequestHandler.handle(player, new ShuffleRequestPayload(containerId));
             helper.assertTrue(villager.getOffers() == afterTrade, "shuffle request after the first trade was accepted");
+            helper.succeed();
+        });
+    }
+
+    /** Data-pack trades may reward no XP; the first trade still locks shuffling. */
+    public static void zeroXpTradeLocksShuffling(GameTestHelper helper) {
+        Villager villager = librarian(helper);
+        ServerPlayer player = openTrading(helper, villager);
+        int containerId = player.containerMenu.containerId;
+
+        MerchantOffer zeroXpTrade = new MerchantOffer(new ItemCost(Items.EMERALD), new ItemStack(Items.PAPER), 12, 0, 0.05F);
+        villager.getOffers().add(zeroXpTrade);
+        villager.notifyTrade(zeroXpTrade);
+        helper.assertValueEqual(villager.getVillagerXp(), 0, "villager XP after a 0 XP trade");
+        helper.assertTrue(((TradeShufflerVillager) villager).tradeshuffler$isTraded(), "0 XP trade did not mark the villager as traded");
+        villager.restock();
+        helper.assertTrue(((TradeShufflerVillager) villager).tradeshuffler$isTraded(), "traded flag lost after a restock");
+
+        helper.runAfterDelay(ServerConfigHolder.current().shuffleCooldownTicks() + 1, () -> {
+            assertStillTrading(helper, player, containerId);
+            MerchantOffers afterTrade = villager.getOffers();
+            ShuffleRequestHandler.handle(player, new ShuffleRequestPayload(containerId));
+            helper.assertTrue(villager.getOffers() == afterTrade, "shuffle request after a 0 XP trade was accepted");
             helper.succeed();
         });
     }
