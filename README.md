@@ -95,6 +95,6 @@ Full license text:
 
 - [`LICENSE`](LICENSE)
 
-Third-party license texts/references:
+Third-party components, platform dependencies and trademarks:
 
 - [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)
