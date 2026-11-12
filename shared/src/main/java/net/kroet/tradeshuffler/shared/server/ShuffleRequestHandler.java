@@ -1,6 +1,7 @@
 package net.kroet.tradeshuffler.shared.server;
 
 import com.mojang.logging.LogUtils;
+import java.util.Objects;
 import java.util.UUID;
 import net.kroet.tradeshuffler.common.rules.ShuffleCooldown;
 import net.kroet.tradeshuffler.common.rules.ShuffleEligibility;
@@ -39,7 +40,7 @@ public final class ShuffleRequestHandler {
 
         COOLDOWN.markUsed(player.getUUID(), tick);
         LOGGER.debug("Shuffling trades for {} (container {})", player.getScoreboardName(), payload.containerId());
-        ShuffleService.shuffle(player, (Villager) trader, (MerchantMenu) open);
+        ShuffleService.shuffle(player, (Villager) Objects.requireNonNull(trader, "allowed verdict implies a villager trader"), (MerchantMenu) open);
     }
 
     /** Called when a player leaves, so the cooldown map does not grow. */

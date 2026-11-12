@@ -8,6 +8,7 @@ import java.util.Properties;
 import net.kroet.tradeshuffler.common.config.UpdateChannel;
 import net.kroet.tradeshuffler.common.facade.UpdateFacade;
 import net.kroet.tradeshuffler.common.facade.UpdateFacade.UpdateCheckResult;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Runs the TurtleLib update check with the bundled project ids and prepares the
@@ -23,8 +24,8 @@ public final class TradeShufflerUpdateService {
     public static UpdateStatus checkForUpdates(
             String currentVersion,
             String minecraftVersion,
-            UpdateChannel updateChannel,
-            ModLoader loader) {
+            @Nullable UpdateChannel updateChannel,
+            @Nullable ModLoader loader) {
         UpdateSources sources = loadBundledSources();
         if (isBlank(sources.modrinthProjectId()) && isBlank(sources.curseforgeProjectId())) {
             return UpdateStatus.notConfigured();
@@ -48,7 +49,7 @@ public final class TradeShufflerUpdateService {
         return new UpdateStatus(result.currentVersion(), result.latestVersion(), releases, result.errors());
     }
 
-    private static boolean isBlank(String value) {
+    private static boolean isBlank(@Nullable String value) {
         return value == null || value.isBlank();
     }
 
@@ -70,14 +71,19 @@ public final class TradeShufflerUpdateService {
                 props.getProperty("curseforge.projectId"));
     }
 
-    record UpdateSources(String modrinthUrl, String modrinthProjectId, String curseforgeUrl, String curseforgeProjectId) {
+    record UpdateSources(
+            @Nullable String modrinthUrl,
+            @Nullable String modrinthProjectId,
+            @Nullable String curseforgeUrl,
+            @Nullable String curseforgeProjectId) {
         static UpdateSources empty() {
             return new UpdateSources(null, null, null, null);
         }
 
+        @Nullable
         String pageUrl(UpdateProvider provider) {
             String url = provider == UpdateProvider.MODRINTH ? modrinthUrl : curseforgeUrl;
-            return isBlank(url) ? null : url.trim();
+            return url == null || url.isBlank() ? null : url.trim();
         }
     }
 
@@ -86,8 +92,8 @@ public final class TradeShufflerUpdateService {
      * neither holds null values.
      */
     public record UpdateStatus(
-            String currentVersion,
-            String latestVersion,
+            @Nullable String currentVersion,
+            @Nullable String latestVersion,
             Map<UpdateProvider, ProviderRelease> releases,
             Map<UpdateProvider, String> errors) {
         public UpdateStatus {

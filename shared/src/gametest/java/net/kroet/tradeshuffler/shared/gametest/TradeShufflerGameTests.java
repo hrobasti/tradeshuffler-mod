@@ -3,6 +3,7 @@ package net.kroet.tradeshuffler.shared.gametest;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import net.kroet.tradeshuffler.common.rules.LevelPlan;
 import net.kroet.tradeshuffler.common.rules.PlanPacer;
@@ -45,6 +46,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.TagValueInput;
 import net.minecraft.world.level.storage.TagValueOutput;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.Nullable;
 
 /**
  * Server game tests for TradeShuffler, shared by both loaders. They only use
@@ -93,7 +95,7 @@ public final class TradeShufflerGameTests {
         helper.startSequence()
                 .thenWaitUntil(() -> assertPlanComplete(helper, villager))
                 .thenExecute(() -> {
-                    Tag expected = encode(helper, plan(villager).batches().get(2));
+                    Tag expected = encode(helper, completePlan(villager).batches().get(2));
                     int noviceCount = villager.getOffers().size();
 
                     villager.setVillagerXp(VillagerData.getMaxXpPerLevel(1));
@@ -212,7 +214,7 @@ public final class TradeShufflerGameTests {
                 .thenWaitUntil(() -> assertPlanComplete(helper, villager))
                 .thenExecute(() -> {
                     int mapsInPlan = 0;
-                    for (MerchantOffers batch : plan(villager).batches().values()) {
+                    for (MerchantOffers batch : completePlan(villager).batches().values()) {
                         for (MerchantOffer offer : batch) {
                             if (offer.getResult().has(DataComponents.MAP_ID)) {
                                 mapsInPlan++;
@@ -243,7 +245,7 @@ public final class TradeShufflerGameTests {
                     Villager cured = zombie.convertTo(EntityTypes.VILLAGER, ConversionParams.single(zombie, false, false),
                             villagerAfterCure -> villagerAfterCure.setVillagerData(zombie.getVillagerData()));
                     helper.assertTrue(cured != null, "zombie villager was not cured");
-                    TradeShufflerVillager curedState = (TradeShufflerVillager) cured;
+                    TradeShufflerVillager curedState = (TradeShufflerVillager) Objects.requireNonNull(cured, "cure checked above");
                     helper.assertValueEqual(curedState.tradeshuffler$isTraded(), traded, "traded flag after the cure");
                     helper.assertValueEqual(encodePlan(helper, curedState.tradeshuffler$getPlan()), expected, "trade plan after the cure");
                 })
@@ -312,8 +314,13 @@ public final class TradeShufflerGameTests {
         helper.assertTrue(plan != null && plan.isComplete(), "trade plan was not generated");
     }
 
-    private static LevelPlan<MerchantOffers> plan(Villager villager) {
+    private static @Nullable LevelPlan<MerchantOffers> plan(Villager villager) {
         return ((TradeShufflerVillager) villager).tradeshuffler$getPlan();
+    }
+
+    /** Only after {@link #assertPlanComplete} passed. */
+    private static LevelPlan<MerchantOffers> completePlan(Villager villager) {
+        return Objects.requireNonNull(plan(villager), "plan checked by assertPlanComplete");
     }
 
     private static Tag encode(GameTestHelper helper, MerchantOffers offers) {
@@ -321,7 +328,7 @@ public final class TradeShufflerGameTests {
                 .getOrThrow();
     }
 
-    private static Tag encodePlan(GameTestHelper helper, LevelPlan<MerchantOffers> plan) {
+    private static Tag encodePlan(GameTestHelper helper, @Nullable LevelPlan<MerchantOffers> plan) {
         CompoundTag tag = new CompoundTag();
         if (plan != null) {
             tag.putInt("from_level", plan.fromLevel());
@@ -330,11 +337,13 @@ public final class TradeShufflerGameTests {
         return tag;
     }
 
-    private static <E extends Entity> E reload(GameTestHelper helper, E entity, EntityType<E> type) {
+    private static <E extends Entity> E reload(GameTestHelper helper, Entity entity, EntityType<E> type) {
         TagValueOutput output = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, helper.getLevel().registryAccess());
         entity.saveWithoutId(output);
-        E copy = type.create(helper.getLevel(), EntitySpawnReason.LOAD);
-        helper.assertTrue(copy != null, "could not create " + type);
+        @Nullable
+        E created = type.create(helper.getLevel(), EntitySpawnReason.LOAD);
+        helper.assertTrue(created != null, "could not create " + type);
+        E copy = Objects.requireNonNull(created, "creation checked above");
         copy.load(TagValueInput.create(ProblemReporter.DISCARDING, helper.getLevel().registryAccess(), output.buildResult()));
         return copy;
     }

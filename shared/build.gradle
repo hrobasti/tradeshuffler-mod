@@ -46,3 +46,11 @@ sourceSets {
         runtimeClasspath += sourceSets.main.runtimeClasspath + sourceSets.main.output
     }
 }
+
+// IDEs treat 'gametest' as test code and hide it from other projects by default; the loader
+// game test source sets need it (Gradle itself uses the classpath lines above).
+eclipse {
+    classpath {
+        containsTestFixtures = true
+    }
+}

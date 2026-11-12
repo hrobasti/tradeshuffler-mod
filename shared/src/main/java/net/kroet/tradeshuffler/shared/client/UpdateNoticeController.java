@@ -12,6 +12,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 
 /**
@@ -21,15 +22,15 @@ import org.slf4j.Logger;
  */
 public final class UpdateNoticeController {
     private static final Logger LOGGER = LogUtils.getLogger();
-    private volatile TradeShufflerUpdateService.UpdateStatus pendingUpdateStatus;
+    private volatile TradeShufflerUpdateService.@Nullable UpdateStatus pendingUpdateStatus;
 
     /**
      * @param currentVersion
      *            the mod version as reported by the loader; the check is skipped
      *            when it is unknown
      */
-    public void scheduleUpdateCheck(TradeShufflerClientConfig config, ModLoader loader, String currentVersion) {
-        if (config == null || !config.updateCheckEnabled()) {
+    public void scheduleUpdateCheck(TradeShufflerClientConfig config, ModLoader loader, @Nullable String currentVersion) {
+        if (!config.updateCheckEnabled()) {
             return;
         }
 
@@ -61,7 +62,7 @@ public final class UpdateNoticeController {
         if (status == null || !status.hasUpdate()) {
             return;
         }
-        if (minecraft == null || minecraft.player == null) {
+        if (minecraft.player == null) {
             return;
         }
 

@@ -18,7 +18,7 @@ final class ShuffleService {
     static void shuffle(ServerPlayer player, Villager villager, MerchantMenu menu) {
         // Vanilla generates the novice batch through the regular trade set path, so
         // data packs and modded trades apply.
-        villager.setOffers(null);
+        clearOffers(villager);
         MerchantOffers offers = villager.getOffers();
         // For non-empty offers this also resends them and recomputes the result slot,
         // so a selected old offer cannot be taken for free.
@@ -37,5 +37,12 @@ final class ShuffleService {
         // shuffling pauses.
         TradePlanService.scheduleAfterShuffle(villager);
         TradeStateService.sendTradeState(player, villager);
+    }
+
+    // Vanilla treats null offers as "not generated yet"; its parameter is not
+    // annotated for that.
+    @SuppressWarnings("null")
+    private static void clearOffers(Villager villager) {
+        villager.setOffers(null);
     }
 }

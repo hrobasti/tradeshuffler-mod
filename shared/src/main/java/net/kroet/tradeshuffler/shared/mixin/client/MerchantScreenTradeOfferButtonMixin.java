@@ -28,6 +28,8 @@ abstract class MerchantScreenTradeOfferButtonMixin extends Button.Plain implemen
     @Final
     MerchantScreen this$0;
 
+    // Never runs; this$0 is a @Shadow of the synthetic outer-instance field.
+    @SuppressWarnings("null")
     private MerchantScreenTradeOfferButtonMixin(int x, int y, int width, int height, Component message, OnPress onPress, CreateNarration narration) {
         super(x, y, width, height, message, onPress, narration);
     }

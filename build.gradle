@@ -95,13 +95,10 @@ def verifyMatrixTargets = tasks.register('verifyMatrixTargets') {
 tasks.register('testTradeShuffler') {
     dependsOn('spotlessCheck')
     group = 'verification'
-    description = 'Runs all TradeShuffler unit tests (common + shared + Fabric + NeoForge).'
-    dependsOn(
-        ':tradeshuffler-common:test',
-        ':tradeshuffler-shared:test',
-        ':tradeshuffler-fabric:test',
-        ':tradeshuffler-neoforge:test'
-    )
+    description = 'Runs all TradeShuffler unit tests and the null analysis (common + shared + Fabric + NeoForge).'
+    ['common', 'shared', 'fabric', 'neoforge'].each { module ->
+        dependsOn(":tradeshuffler-${module}:test", ":tradeshuffler-${module}:nullCheck")
+    }
 }
 
 // Server game tests on both loaders; each run ends with a non-zero exit code when a test fails.

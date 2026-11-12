@@ -88,48 +88,56 @@ public final class TradeShufflerConfigScreen extends OptionsSubScreen {
         }
 
         addSectionRow(Component.translatable(KEY + "section.shuffle"));
-        shuffleButtonToggle = toggleButton(button -> {
+        Button shuffleToggle = toggleButton(button -> {
             shuffleButtonEnabled = !shuffleButtonEnabled;
             refresh();
         });
-        addLabeledRow("shuffle_button.enabled", onOffTooltip("shuffle_button.enabled"), shuffleButtonToggle);
-        offsetXField = numberField("shuffle_button.offset_x", initial.shuffleButtonOffsetX(), 3);
+        shuffleButtonToggle = shuffleToggle;
+        addLabeledRow("shuffle_button.enabled", onOffTooltip("shuffle_button.enabled"), shuffleToggle);
+        EditBox offsetX = numberField("shuffle_button.offset_x", initial.shuffleButtonOffsetX(), 3);
+        offsetXField = offsetX;
         addLabeledRow("shuffle_button.offset_x", rangeTooltip(TradeShufflerClientConfig.MIN_BUTTON_OFFSET, TradeShufflerClientConfig.MAX_BUTTON_OFFSET,
-                "shuffle_button.offset_x"), offsetXField);
-        offsetYField = numberField("shuffle_button.offset_y", initial.shuffleButtonOffsetY(), 3);
+                "shuffle_button.offset_x"), offsetX);
+        EditBox offsetY = numberField("shuffle_button.offset_y", initial.shuffleButtonOffsetY(), 3);
+        offsetYField = offsetY;
         addLabeledRow("shuffle_button.offset_y", rangeTooltip(TradeShufflerClientConfig.MIN_BUTTON_OFFSET, TradeShufflerClientConfig.MAX_BUTTON_OFFSET,
-                "shuffle_button.offset_y"), offsetYField);
+                "shuffle_button.offset_y"), offsetY);
 
         addSectionRow(Component.translatable(KEY + "section.preview"));
-        previewToggle = toggleButton(button -> {
+        Button preview = toggleButton(button -> {
             previewEnabled = !previewEnabled;
             refresh();
         });
-        addLabeledRow("preview.enabled", onOffTooltip("preview.enabled"), previewToggle);
-        dimAlphaField = numberField("preview.dim_alpha", initial.previewDimAlpha(), 3);
+        previewToggle = preview;
+        addLabeledRow("preview.enabled", onOffTooltip("preview.enabled"), preview);
+        EditBox dimAlpha = numberField("preview.dim_alpha", initial.previewDimAlpha(), 3);
+        dimAlphaField = dimAlpha;
         addLabeledRow("preview.dim_alpha", rangeTooltip(TradeShufflerClientConfig.MIN_PREVIEW_DIM_ALPHA, TradeShufflerClientConfig.MAX_PREVIEW_DIM_ALPHA,
-                "preview.dim_alpha"), dimAlphaField);
-        stripeToggle = toggleButton(button -> {
+                "preview.dim_alpha"), dimAlpha);
+        Button stripe = toggleButton(button -> {
             previewLevelStripe = !previewLevelStripe;
             refresh();
         });
-        addLabeledRow("preview.level_stripe", onOffTooltip("preview.level_stripe"), stripeToggle);
+        stripeToggle = stripe;
+        addLabeledRow("preview.level_stripe", onOffTooltip("preview.level_stripe"), stripe);
 
         addSectionRow(Component.translatable(KEY + "section.updates"));
-        updateCheckToggle = toggleButton(button -> {
+        Button updateCheck = toggleButton(button -> {
             updateCheckEnabled = !updateCheckEnabled;
             refresh();
         });
-        addLabeledRow("update.enabled", onOffTooltip("update.enabled"), updateCheckToggle);
-        updateChannelButton = toggleButton(button -> {
+        updateCheckToggle = updateCheck;
+        addLabeledRow("update.enabled", onOffTooltip("update.enabled"), updateCheck);
+        Button channelButton = toggleButton(button -> {
             updateChannel = nextChannel(updateChannel);
             refresh();
         });
+        updateChannelButton = channelButton;
         addLabeledRow("update.channel", List.of(
                 tooltipLine(Component.translatable(KEY + "update.channel.stable"), KEY + "update.channel.tooltip.stable.desc"),
                 tooltipLine(Component.translatable(KEY + "update.channel.beta"), KEY + "update.channel.tooltip.beta.desc"),
                 tooltipLine(Component.translatable(KEY + "update.channel.alpha"), KEY + "update.channel.tooltip.alpha.desc")),
-                updateChannelButton);
+                channelButton);
 
         refresh();
     }
@@ -167,19 +175,22 @@ public final class TradeShufflerConfigScreen extends OptionsSubScreen {
         setMessage(previewToggle, onOff(previewEnabled));
         setEnabled(dimAlphaField, previewEnabled);
         setMessage(stripeToggle, onOff(previewLevelStripe));
-        if (stripeToggle != null) {
-            stripeToggle.active = previewEnabled;
+        Button stripe = stripeToggle;
+        if (stripe != null) {
+            stripe.active = previewEnabled;
         }
         setMessage(updateCheckToggle, onOff(updateCheckEnabled));
-        if (updateChannelButton != null) {
-            updateChannelButton.setMessage(updateCheckEnabled
+        Button channelButton = updateChannelButton;
+        if (channelButton != null) {
+            channelButton.setMessage(updateCheckEnabled
                     ? Component.translatable(KEY + "update.channel." + updateChannel.name().toLowerCase(Locale.ROOT))
                     : Component.translatable(KEY + "update.channel.disabled"));
-            updateChannelButton.active = updateCheckEnabled;
+            channelButton.active = updateCheckEnabled;
         }
         boolean valid = markValidity(offsetXField) & markValidity(offsetYField) & markValidity(dimAlphaField);
-        if (saveButton != null) {
-            saveButton.active = valid;
+        Button save = saveButton;
+        if (save != null) {
+            save.active = valid;
         }
     }
 

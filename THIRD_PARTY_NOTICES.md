@@ -15,3 +15,4 @@ Never part of the mod jars. The versions of Minecraft, the loaders, Fabric API a
 - Provided at runtime by Minecraft or the mod loader: Minecraft (Mojang, Minecraft EULA), Fabric Loader (Apache-2.0), Fabric API (Apache-2.0), NeoForge (LGPL-2.1), SpongePowered Mixin (MIT), MixinExtras (MIT), Gson (Apache-2.0, compiled against 2.10.1), SLF4J (MIT), JSpecify (Apache-2.0), DataFixerUpper (MIT), Netty (Apache-2.0).
 - Installed as separate mods: TurtleLib by kroet.net (MIT, required; minimum version in `version.properties`), Mod Menu (MIT, optional on Fabric for the settings screen).
 - Used only for tests: JUnit 5 (Jupiter 5.12.1, Platform Launcher 1.12.1; EPL-2.0).
+- Used only for the build-time null analysis: Eclipse Compiler for Java (ECJ 3.46.100; EPL-2.0).

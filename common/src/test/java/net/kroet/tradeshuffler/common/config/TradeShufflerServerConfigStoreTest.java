@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class TradeShufflerServerConfigStoreTest {
+    // JUnit injects the directory after construction.
+    @SuppressWarnings("null")
     @TempDir
     Path tempDir;
 
